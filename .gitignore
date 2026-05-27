@@ -13,6 +13,8 @@ dist/
 build/
 *.log
 *.pyc
+*.db
+*.egg-info/
 backend/.ruff_cache/
 backend/.coverage
 backend/taskflow.db
