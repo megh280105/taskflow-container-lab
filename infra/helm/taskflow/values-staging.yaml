@@ -1,0 +1,15 @@
+global:
+  env: staging
+  frontendOrigin: https://staging.taskflow.example.com
+
+backend:
+  replicaCount: 2
+
+worker:
+  replicaCount: 2
+
+frontend:
+  replicaCount: 2
+
+ingress:
+  host: staging.taskflow.example.com

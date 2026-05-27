@@ -21,6 +21,11 @@ spec:
         {{- include "taskflow.labels" . | nindent 8 }}
         app.kubernetes.io/component: worker
     spec:
+      serviceAccountName: {{ include "taskflow.serviceAccountName" (list . "worker") }}
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: worker
           image: "{{ .Values.worker.image.repository }}:{{ .Values.worker.image.tag }}"
@@ -30,6 +35,16 @@ spec:
                 name: {{ include "taskflow.fullname" . }}-config
             - secretRef:
                 name: {{ include "taskflow.fullname" . }}-secrets
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           livenessProbe:
             exec:
               command:
@@ -48,3 +63,6 @@ spec:
             periodSeconds: 15
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
+      volumes:
+        - name: tmp
+          emptyDir: {}

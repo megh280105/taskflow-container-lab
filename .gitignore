@@ -19,3 +19,4 @@ backend/.ruff_cache/
 backend/.coverage
 backend/taskflow.db
 frontend/.vite/
+.tmp/

@@ -5,7 +5,7 @@ from rq import Queue
 from sqlalchemy import select
 
 from app.cache import get_redis
-from app.db import SessionLocal
+from app.db import get_session_local
 from app.models import Task
 
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ def enqueue_task_reminder(task_id: int) -> None:
 
 
 def send_task_reminder(task_id: int) -> None:
-    with SessionLocal() as db:
+    with get_session_local()() as db:
         task = db.scalar(select(Task).where(Task.id == task_id))
         if task is None:
             logger.warning("Reminder skipped because task %s was not found", task_id)

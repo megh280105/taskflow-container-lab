@@ -35,6 +35,11 @@ spec:
       labels:
         app: backend
     spec:
+      serviceAccountName: backend
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: backend
           image: taskflow-backend:0.1.0
@@ -47,6 +52,16 @@ spec:
                 name: taskflow-config
             - secretRef:
                 name: taskflow-secrets
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           livenessProbe:
             httpGet:
               path: /health
@@ -66,3 +81,6 @@ spec:
             limits:
               cpu: 500m
               memory: 512Mi
+      volumes:
+        - name: tmp
+          emptyDir: {}

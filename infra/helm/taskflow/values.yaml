@@ -6,6 +6,8 @@ global:
   redisCacheTtlSeconds: 300
   frontendOrigin: http://taskflow.local
   logLevel: INFO
+  networkPolicy:
+    enabled: true
 
 postgres:
   image: postgres:16-alpine
@@ -39,6 +41,8 @@ backend:
   replicaCount: 2
   service:
     port: 8000
+  serviceAccount:
+    create: true
   resources:
     requests:
       cpu: 100m
@@ -60,6 +64,8 @@ worker:
     tag: "0.1.0"
     pullPolicy: IfNotPresent
   replicaCount: 2
+  serviceAccount:
+    create: true
   resources:
     requests:
       cpu: 75m
@@ -74,8 +80,11 @@ frontend:
     tag: "0.1.0"
     pullPolicy: IfNotPresent
   replicaCount: 2
+  containerPort: 8080
   service:
     port: 80
+  serviceAccount:
+    create: true
   resources:
     requests:
       cpu: 50m

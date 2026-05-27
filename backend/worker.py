@@ -1,6 +1,6 @@
 import logging
 
-from rq import Connection, Worker
+from rq import Worker
 
 from app.cache import get_redis
 from app.jobs import QUEUE_NAME
@@ -10,9 +10,8 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name
 
 def main() -> None:
     connection = get_redis()
-    with Connection(connection):
-        worker = Worker([QUEUE_NAME])
-        worker.work()
+    worker = Worker([QUEUE_NAME], connection=connection)
+    worker.work()
 
 
 if __name__ == "__main__":

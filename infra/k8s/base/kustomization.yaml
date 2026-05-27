@@ -2,6 +2,7 @@ namespace: taskflow-dev
 
 resources:
   - namespace.yaml
+  - serviceaccounts.yaml
   - configmap.yaml
   - secret.yaml
   - postgres.yaml
@@ -12,3 +13,4 @@ resources:
   - ingress.yaml
   - hpa.yaml
   - pdb.yaml
+  - networkpolicies.yaml

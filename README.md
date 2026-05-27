@@ -25,7 +25,19 @@ TaskFlow is a small production-style learning project built from the roadmap in 
 - `frontend/` holds the React application.
 - `infra/k8s/base/` holds raw Kubernetes manifests.
 - `infra/helm/taskflow/` holds the Helm chart.
+- `policy/` holds Kubernetes policy checks used in CI.
+- `Makefile` holds the common local dev and validation commands.
 - `tracker.md` shows current implementation status.
+
+## v2 foundation
+
+The repo now includes the first v2 hardening slice:
+
+- Backend coverage gate and richer API/job/worker tests
+- Optional container-backed integration test with real Postgres and Redis
+- Kubernetes ServiceAccounts, NetworkPolicies, and stricter pod/container security defaults
+- Helm, Kustomize, and policy validation paths for CI
+- Supporting docs in `ARCHITECTURE.md`, `CONTRIBUTING.md`, and `RUNBOOK.md`
 
 ## Run locally with Docker Compose
 
@@ -41,6 +53,14 @@ TaskFlow is a small production-style learning project built from the roadmap in 
    - Backend metrics: `http://localhost:8000/metrics`
 5. Stop everything:
    - `docker compose down`
+
+## Validation commands
+
+- `make test`
+- `make frontend-build`
+- `make helm-lint`
+- `make kube-render`
+- `make policy-test`
 
 ## Run the backend without Docker
 

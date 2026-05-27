@@ -26,6 +26,39 @@ jobs:
       - name: Run backend tests
         run: pytest backend/tests -q
 
+  infra-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+      - uses: azure/setup-kubectl@v4
+      - name: Install kubeconform
+        run: |
+          curl -sSL -o /tmp/kubeconform.tar.gz https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz
+          tar -xzf /tmp/kubeconform.tar.gz -C /tmp
+          sudo mv /tmp/kubeconform /usr/local/bin/kubeconform
+      - name: Lint Helm chart
+        run: helm lint ./infra/helm/taskflow -f ./infra/helm/taskflow/values-dev.yaml
+      - name: Render manifests
+        run: |
+          mkdir -p .tmp
+          helm template taskflow ./infra/helm/taskflow -f ./infra/helm/taskflow/values-dev.yaml > .tmp/helm.yaml
+          kubectl kustomize infra/k8s/base > .tmp/kustomize.yaml
+      - name: Validate rendered YAML with kubeconform
+        run: |
+          kubeconform -summary -ignore-missing-schemas .tmp/helm.yaml
+          kubeconform -summary -ignore-missing-schemas .tmp/kustomize.yaml
+      - name: Validate compose file
+        run: docker compose config >/tmp/taskflow-compose.yaml
+      - name: Conftest policy checks
+        run: |
+          docker run --rm -v "$PWD":/project -w /project openpolicyagent/conftest:v0.59.0 \
+            test .tmp/helm.yaml .tmp/kustomize.yaml --policy ./policy
+      - name: Trivy config scan
+        run: |
+          docker run --rm -v "$PWD":/project aquasec/trivy:0.53.0 \
+            config --exit-code 1 --severity HIGH,CRITICAL /project/infra
+
   frontend-build:
     runs-on: ubuntu-latest
     steps:
@@ -46,6 +79,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - backend-tests
+      - infra-validate
       - frontend-build
     outputs:
       image_tag: ${{ steps.meta.outputs.image_tag }}

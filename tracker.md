@@ -2,7 +2,7 @@
 
 ## Working On
 
-- Runtime verification and environment blockers
+- Preparing the first v2 hardening slice for push and server deployment
 
 ## Done
 
@@ -16,14 +16,24 @@
 - Added raw Kubernetes manifests with namespace, services, deployments, StatefulSet, ingress, HPA, and PDBs
 - Added a Helm chart with dev/prod values
 - Added GitHub Actions CI/CD workflow and observability scaffolding
+- Installed `helm` locally and rendered the chart successfully
+- Started Docker Desktop and verified the Compose stack builds and starts
+- Fixed the worker runtime crash caused by an outdated `rq` import
+- Verified the backend health endpoint, frontend HTTP response, and live app UI in the in-app browser
+- Expanded backend coverage with API, job, and worker tests plus a container-backed integration test path
+- Added a backend coverage gate and testcontainer dependencies for CI
+- Hardened raw Kubernetes manifests with Pod Security labels, ServiceAccounts, NetworkPolicies, and stricter security contexts
+- Mirrored the security hardening into the Helm chart and added `values-staging.yaml`
+- Added repo-level policy validation with Conftest plus manifest validation with kubeconform
+- Added operator docs: `ARCHITECTURE.md`, `CONTRIBUTING.md`, `RUNBOOK.md`, and a `Makefile`
+- Rebuilt the Docker Compose stack after the frontend moved to an unprivileged NGINX runtime
 
 ## Blocked / Needs Local Runtime
 
-- Docker Compose runtime verification is blocked because the local Docker daemon is not reachable
-- Helm chart rendering is blocked because `helm` is not installed on this machine
+- No Kubernetes cluster is currently configured in this workspace, so live `helm install`/rollout verification is still pending
 
 ## Left
 
-- Start Docker locally and verify `docker compose up --build`
-- Install Helm and render or install the chart
-- Run live browser verification against the composed app
+- Create or attach to a Kubernetes cluster
+- Label the namespace and install the hardened Helm chart
+- Add later-stage v2 items like GitOps, backup/restore, and progressive delivery
