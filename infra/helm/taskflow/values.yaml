@@ -1,0 +1,96 @@
+global:
+  env: development
+  secretKey: change-me
+  databaseUrl: postgresql+psycopg://taskflow:taskflow@postgres:5432/taskflow
+  redisUrl: redis://redis:6379/0
+  redisCacheTtlSeconds: 300
+  frontendOrigin: http://taskflow.local
+  logLevel: INFO
+
+postgres:
+  image: postgres:16-alpine
+  db: taskflow
+  user: taskflow
+  password: taskflow
+  storage: 5Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+redis:
+  image: redis:7-alpine
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+backend:
+  image:
+    repository: taskflow-backend
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  replicaCount: 2
+  service:
+    port: 8000
+  resources:
+    requests:
+      cpu: 100m
+      memory: 192Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    averageCpuUtilization: 70
+  pdb:
+    minAvailable: 1
+
+worker:
+  image:
+    repository: taskflow-worker
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: 75m
+      memory: 128Mi
+    limits:
+      cpu: 300m
+      memory: 256Mi
+
+frontend:
+  image:
+    repository: taskflow-frontend
+    tag: "0.1.0"
+    pullPolicy: IfNotPresent
+  replicaCount: 2
+  service:
+    port: 80
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 128Mi
+  pdb:
+    minAvailable: 1
+
+ingress:
+  enabled: true
+  className: nginx
+  host: taskflow.local
+
+serviceMonitor:
+  enabled: false
+  interval: 30s

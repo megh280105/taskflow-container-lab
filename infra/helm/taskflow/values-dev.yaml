@@ -1,0 +1,12 @@
+global:
+  env: development
+  frontendOrigin: http://taskflow.local
+
+backend:
+  replicaCount: 2
+
+worker:
+  replicaCount: 2
+
+frontend:
+  replicaCount: 2

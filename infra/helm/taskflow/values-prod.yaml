@@ -1,0 +1,19 @@
+global:
+  env: production
+  frontendOrigin: https://taskflow.example.com
+
+backend:
+  replicaCount: 3
+  hpa:
+    minReplicas: 3
+    maxReplicas: 8
+    averageCpuUtilization: 60
+
+worker:
+  replicaCount: 3
+
+frontend:
+  replicaCount: 3
+
+ingress:
+  host: taskflow.example.com

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "taskflow.fullname" . }}-config
+  labels:
+    {{- include "taskflow.labels" . | nindent 4 }}
+data:
+  TASKFLOW_ENV: {{ .Values.global.env | quote }}
+  TASKFLOW_REDIS_URL: {{ .Values.global.redisUrl | quote }}
+  TASKFLOW_REDIS_CACHE_TTL_SECONDS: {{ .Values.global.redisCacheTtlSeconds | quote }}
+  TASKFLOW_FRONTEND_ORIGIN: {{ .Values.global.frontendOrigin | quote }}
+  TASKFLOW_LOG_LEVEL: {{ .Values.global.logLevel | quote }}

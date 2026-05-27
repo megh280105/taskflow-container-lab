@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: taskflow-config
+data:
+  TASKFLOW_ENV: development
+  TASKFLOW_REDIS_URL: redis://redis:6379/0
+  TASKFLOW_REDIS_CACHE_TTL_SECONDS: "300"
+  TASKFLOW_FRONTEND_ORIGIN: http://taskflow.local
+  TASKFLOW_LOG_LEVEL: INFO
